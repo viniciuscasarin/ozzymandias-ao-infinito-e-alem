@@ -89,7 +89,7 @@ body {
 	text-align: center;
 	z-index: 1;
 }
-  #startBtn {
+#startBtn {
     position: absolute;
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
@@ -121,7 +121,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":6185080,"index.wasm":37686550},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":6185304,"index.wasm":37686550},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
@@ -225,36 +225,35 @@ const engine = new Engine(GODOT_CONFIG);
 	}
 }());
 		</script>
+		<script>
+			const startBtn = document.getElementById("startBtn");
 
-<script>
-  const startBtn = document.getElementById("startBtn");
+			startBtn.addEventListener("click", async () => {
+				// Pede permissão para acelerômetro/giroscópio no Safari
+				if (typeof DeviceMotionEvent !== 'undefined' &&
+					typeof DeviceMotionEvent.requestPermission === 'function') {
+				try {
+					const response = await DeviceMotionEvent.requestPermission();
+					if (response === 'granted') {
+					console.log("Permissão de sensor concedida!");
+					} else {
+					alert("Sensor não autorizado, apenas touch funcionará");
+					}
+				} catch(err) {
+					console.error(err);
+				}
+				}
 
-  startBtn.addEventListener("click", async () => {
-    // Pede permissão para acelerômetro/giroscópio no Safari
-    if (typeof DeviceMotionEvent !== 'undefined' &&
-        typeof DeviceMotionEvent.requestPermission === 'function') {
-      try {
-        const response = await DeviceMotionEvent.requestPermission();
-        if (response === 'granted') {
-          console.log("Permissão de sensor concedida!");
-        } else {
-          alert("Sensor não autorizado, apenas touch funcionará");
-        }
-      } catch(err) {
-        console.error(err);
-      }
-    }
-
-    // Esconde o botão e inicia o jogo
-    startBtn.style.display = 'none';
-    // Inicia o Godot
-    var engineInstance = Godot.instantiate("game.wasm", {
-      canvas_id: null,
-      on_progress: (p) => console.log(`Load progress: ${p*100}%`),
-    });
-    engineInstance.then(g => g.run());
-  });
-</script>
+				// Esconde o botão e inicia o jogo
+				startBtn.style.display = 'none';
+				// Inicia o Godot
+				var engineInstance = Godot.instantiate("game.wasm", {
+				canvas_id: null,
+				on_progress: (p) => console.log(`Load progress: ${p*100}%`),
+				});
+				engineInstance.then(g => g.run());
+			});
+			</script>
 	</body>
 </html>
 
